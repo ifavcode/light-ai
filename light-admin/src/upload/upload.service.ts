@@ -32,7 +32,7 @@ export class UploadService {
 
   async uploadOSS(url: string, type: string) {
     const today = dayjs().format('YYYY-MM-DD');
-    const tmpFile = await downloadFile(url)
+    const tmpFile = await downloadFile(url);
     const result = await this.ossClient.put(
       today + '/' + basename(tmpFile.name) + '.' + type,
       tmpFile.name,
@@ -44,7 +44,7 @@ export class UploadService {
         },
       },
     );
-    tmpFile.removeCallback()
+    tmpFile.removeCallback();
     return result;
   }
 
@@ -53,6 +53,22 @@ export class UploadService {
     const result = await this.ossClient.put(
       today + '/' + file.originalname,
       file.buffer,
+      {
+        headers: {
+          'x-oss-forbid-overwrite': 'false',
+          'x-oss-storage-class': 'Standard',
+          'x-oss-object-acl': 'public-read',
+        },
+      },
+    );
+    return result;
+  }
+
+  async uploadOSSBuffer(buffer: Buffer, ext?: string) {
+    const today = dayjs().format('YYYY-MM-DD');
+    const result = await this.ossClient.put(
+      today + '/' + nanoid(10) + '.' + ext,
+      buffer,
       {
         headers: {
           'x-oss-forbid-overwrite': 'false',

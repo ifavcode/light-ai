@@ -6,12 +6,15 @@ import { DataSource } from 'typeorm';
 import { AiModel } from './entities/ai-model.entity';
 import { qianwenOpenaiProviders } from 'src/common/ai-client-providers';
 import { DialogGroupModule } from '../dialog-group/dialog-group.module';
+import { AudioService } from './audio.service';
+import { UploadModule } from 'src/upload/upload.module';
 
 @Module({
-  imports: [DatabaseModule, DialogGroupModule],
+  imports: [DatabaseModule, DialogGroupModule, UploadModule],
   controllers: [QianwenController],
   providers: [
     QianwenService,
+    AudioService,
     ...qianwenOpenaiProviders,
     {
       provide: 'QIANWEN_REPOSITORY',

@@ -26,6 +26,9 @@ export class AiModel {
   @Column({ default: '' })
   mediaUrl: string;
 
+  @Column({ default: '', comment: '朗读链接' })
+  audioUrl: string;
+
   @Column({ default: ModelInputType.TEXT })
   inputType: string;
 

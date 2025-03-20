@@ -88,7 +88,7 @@ importers:
         version: 3.3.8
       openai:
         specifier: ^4.85.2
-        version: 4.85.2
+        version: 4.85.2(ws@8.18.1)
       passport:
         specifier: ^0.7.0
         version: 0.7.0
@@ -119,6 +119,9 @@ importers:
       undici:
         specifier: ^7.4.0
         version: 7.4.0
+      ws:
+        specifier: ^8.18.1
+        version: 8.18.1
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.2.0
@@ -177,6 +180,9 @@ importers:
       '@types/tmp':
         specifier: ^0.2.6
         version: 0.2.6
+      '@types/ws':
+        specifier: ^8.18.0
+        version: 8.18.0
       eslint:
         specifier: ^9.18.0
         version: 9.20.1
@@ -1386,6 +1392,9 @@ packages:
 
   '@types/validator@13.12.2':
     resolution: {integrity: sha512-6SlHBzUW8Jhf3liqrGGXyTJSIFe4nqlJ5A5KaMZ2l/vbM3Wh3KSybots/wfWVzNLK4D1NZluDlSQIbIEPx6oyA==}
+
+  '@types/ws@8.18.0':
+    resolution: {integrity: sha512-8svvI3hMyvN0kKCJMvTJP/x6Y/EoQbepff882wL+Sn5QsXb3etnamgrJq4isrBxSJj5L2AuXcI0+bgkoAXGUJw==}
 
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -4501,6 +4510,18 @@ packages:
       utf-8-validate:
         optional: true
 
+  ws@8.18.1:
+    resolution: {integrity: sha512-RKW2aJZMXeMxVpnZ6bck+RswznaxmzdULiBr6KY7XkTnW8uvt0iT9H5DkHUChXrc+uurzwa0rVI16n/Xzjdz1w==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   xml2js@0.6.2:
     resolution: {integrity: sha512-T4rieHaC1EXcES0Kxxj4JWgaUQHDk+qwHcYOCFHfiwKz7tOVPLq7Hjq9dM1WCMhylqMEfP7hMcOIChvotiZegA==}
     engines: {node: '>=4.0.0'}
@@ -5872,6 +5893,10 @@ snapshots:
   '@types/tmp@0.2.6': {}
 
   '@types/validator@13.12.2': {}
+
+  '@types/ws@8.18.0':
+    dependencies:
+      '@types/node': 22.13.4
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -8254,7 +8279,7 @@ snapshots:
     dependencies:
       mimic-fn: 2.1.0
 
-  openai@4.85.2:
+  openai@4.85.2(ws@8.18.1):
     dependencies:
       '@types/node': 18.19.76
       '@types/node-fetch': 2.6.12
@@ -8263,6 +8288,8 @@ snapshots:
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
       node-fetch: 2.7.0
+    optionalDependencies:
+      ws: 8.18.1
     transitivePeerDependencies:
       - encoding
 
@@ -9302,6 +9329,8 @@ snapshots:
       signal-exit: 3.0.7
 
   ws@8.17.1: {}
+
+  ws@8.18.1: {}
 
   xml2js@0.6.2:
     dependencies:

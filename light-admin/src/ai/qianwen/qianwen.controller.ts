@@ -11,6 +11,7 @@ import {
   Req,
   MessageEvent,
   HttpException,
+  Query,
 } from '@nestjs/common';
 import { QianwenService } from './qianwen.service';
 import { CreateQianwenDto } from './dto/create-qianwen.dto';
@@ -18,12 +19,18 @@ import { UpdateQianwenDto } from './dto/update-qianwen.dto';
 import { interval, Observable, of, Subscriber } from 'rxjs';
 import R from 'src/common/R';
 import { CreateQianwenMapDto } from './dto/create-qianwen-map.dto';
+import { AudioService } from './audio.service';
+import { TextToVideoDTO } from './dto/text-to-video.dto';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Controller('qianwen')
 export class QianwenController {
   private static clientsMap: Map<number, Subscriber<MessageEvent>> = new Map();
 
-  constructor(private readonly qianwenService: QianwenService) {}
+  constructor(
+    private readonly qianwenService: QianwenService,
+    private readonly audioService: AudioService,
+  ) {}
 
   @Post('dialog')
   create(@Body() createQianwenDto: CreateQianwenDto, @Req() req: any) {
@@ -105,5 +112,27 @@ export class QianwenController {
   @Get('onlineCnt')
   async onlineCnt() {
     return QianwenController.clientsMap.size;
+  }
+
+  @Post('textToVideo')
+  async textToVideo(@Body() textToVideoDTO: TextToVideoDTO, @Req() req: any) {
+    if (!textToVideoDTO.text || textToVideoDTO.text === '') {
+      throw new HttpException('请传入文本', 500);
+    }
+    if (textToVideoDTO.text.length > 2000) {
+      throw new HttpException('文本较多、暂不支持朗读', 500);
+    }
+    let client = EventsGateway.webClient.get(req.user.id);
+    if (!client) {
+      throw new HttpException('客户端未连接', 500);
+    }
+    this.audioService.textToVideo(textToVideoDTO, client, req.user);
+    return R.okD();
+  }
+
+  @Get('getAudioHistory')
+  async getAudioHistory(@Req() req: any, @Query('id') id: number) {
+    const audioUrl = await this.audioService.getAudioHistory(id, req.user);
+    return R.okD(audioUrl);
   }
 }

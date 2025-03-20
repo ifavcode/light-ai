@@ -95,10 +95,11 @@ export enum MessageRole {
 }
 
 export interface Message {
+  id?: number;
   role?: MessageRole;
   content?: any;
   reasoningContent?: string;
-  inputType?: string
+  inputType?: string;
 }
 
 export interface CreateQianwenDto {
@@ -234,4 +235,9 @@ export enum ModelInputType {
   IMAGE = "image",
   VIDEO = "video",
   OTHER = "other",
+}
+
+export interface TextToVideoDTO {
+  text: string;
+  id?: number;
 }

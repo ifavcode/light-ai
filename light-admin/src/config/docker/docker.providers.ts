@@ -19,11 +19,11 @@ export const dockerProviders = [
         );
         const docker = new Docker({
           host: configService.get('DOCKER_NAME_HOST') || 'http://127.0.0.1',
-          port:  configService.get('DOCKER_NAME_PORT') || 2375,
+          port: configService.get('DOCKER_NAME_PORT') || 2375,
           version: 'v1.47', // required when Docker >= v1.13 —— Docker Api Version,
-          // ca: fs.readFileSync(path.join(certsPath, 'ca.pem')),
-          // cert: fs.readFileSync(path.join(certsPath, 'cert.pem')),
-          // key: fs.readFileSync(path.join(certsPath, 'key.pem')),
+          ca: fs.readFileSync(path.join(certsPath, 'ca.pem')),
+          cert: fs.readFileSync(path.join(certsPath, 'cert.pem')),
+          key: fs.readFileSync(path.join(certsPath, 'key.pem')),
         });
         // 检查是否连接成功
         const info = await docker.info();

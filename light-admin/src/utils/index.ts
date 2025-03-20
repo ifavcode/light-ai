@@ -121,15 +121,65 @@ export function getClientIp(request: Request): string | undefined {
   return request.ip;
 }
 
-export async function getUrlToBase64(url:string) {
+export async function getUrlToBase64(url: string) {
   try {
     const response = await client.get(url, {
-      responseType: 'arraybuffer'
+      responseType: 'arraybuffer',
     });
     const buffer = Buffer.from(response.data, 'binary');
     return `data:image/png;base64,${buffer.toString('base64')}`;
   } catch (error) {
-    console.error('获取图片失败', error); 
+    console.error('获取图片失败', error);
     throw new Error('获取图片失败');
   }
 }
+
+export const punctuationSymbolsSet = new Set([
+  // 中文标点符号
+  '。',
+  '，',
+  '、',
+  '；',
+  '：',
+  '？',
+  '！',
+  '“',
+  '”',
+  '‘',
+  '’',
+  '（',
+  '）',
+  '〔',
+  '〕',
+  '【',
+  '】',
+  '〖',
+  '〗',
+  '｛',
+  '｝',
+  '——',
+  '……',
+  '《',
+  '》',
+  '〈',
+  '〉',
+  '·',
+  '—',
+  '－',
+  '～',
+  '.',
+  // 英文标点符号
+  '.',
+  ',',
+  '?',
+  '!',
+  ':',
+  ';',
+  '"',
+  "'",
+  '-',
+  '...',
+  // 其他语言标点符号
+  '۔',
+  '؟',
+]);

@@ -1,4 +1,10 @@
-import type { CreateQianwenMapDto, DialogGroup, Page, R } from "@/types";
+import type {
+  CreateQianwenMapDto,
+  DialogGroup,
+  Page,
+  R,
+  TextToVideoDTO,
+} from "@/types";
 import client from "@/utils/request";
 import type { AxiosResponse } from "axios";
 import { type CreateQianwenDto } from "../types/index";
@@ -28,7 +34,6 @@ export function sendMsgMoreApi(data: CreateQianwenMapDto) {
     },
   });
 }
-
 
 export function getQianwenDialogGroupApi(
   params?: Page
@@ -64,6 +69,24 @@ export function getQianwenDialogGroupOneApi(
 
 export function cancelRequestApi(): Promise<AxiosResponse<void>> {
   return client.get(`/qianwen/cancel`, {
+    headers: {
+      isToken: true,
+    },
+  });
+}
+
+export function speakTextApi(data: TextToVideoDTO) {
+  return client.post("/qianwen/textToVideo", data, {
+    headers: {
+      isToken: true,
+    },
+  });
+}
+
+export function getAudioHistoryApi(
+  id: number
+): Promise<AxiosResponse<R<null | string>>> {
+  return client.get("/qianwen/getAudioHistory?id=" + id, {
     headers: {
       isToken: true,
     },

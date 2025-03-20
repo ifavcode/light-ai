@@ -128,7 +128,8 @@ export class QianwenService {
         }
       }
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_qianwen', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_qianwen', error, spec);
       throw new HttpException(error, 500);
@@ -184,7 +185,8 @@ export class QianwenService {
       }
       obj.replyContent = replyContent;
       obj.reasoningContent = reasoningContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_qianwen', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_qianwen', error, spec);
       throw new HttpException(error, 500);
@@ -240,7 +242,8 @@ export class QianwenService {
       }
       obj.replyContent = replyContent;
       obj.reasoningContent = reasoningContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_qianwen', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_qianwen', error, spec);
       throw new HttpException(error, 500);
@@ -288,7 +291,8 @@ export class QianwenService {
         }
       }
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_deepseek', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_deepseek', error, spec);
       throw new HttpException(error, 500);
@@ -344,7 +348,8 @@ export class QianwenService {
       }
       obj.replyContent = replyContent;
       obj.reasoningContent = reasoningContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_deepseek', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_deepseek', error, spec);
       throw new HttpException(error, 500);
@@ -392,7 +397,8 @@ export class QianwenService {
         }
       }
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_qianfan', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_qianfan', error, spec);
       // throw new HttpException(error, 500);
@@ -443,7 +449,8 @@ export class QianwenService {
         }
       }
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_doubao', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_doubao', error, spec);
       throw new HttpException(error, 500);
@@ -512,7 +519,8 @@ export class QianwenService {
         }
       }
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_kimi', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_kimi', error, spec);
       throw new HttpException(error, 500);
@@ -590,7 +598,8 @@ export class QianwenService {
         },
       });
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_gemini', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_gemini', error, spec);
       throw new HttpException(error, 500);
@@ -638,7 +647,8 @@ export class QianwenService {
         }
       }
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_zhipu', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_zhipu', error, spec);
       throw new HttpException(error, 500);
@@ -686,7 +696,8 @@ export class QianwenService {
         }
       }
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_hunyuan', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_hunyuan', error, spec);
       throw new HttpException(error, 500);
@@ -734,7 +745,8 @@ export class QianwenService {
         }
       }
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_yuewen', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_yuewen', error, spec);
       throw new HttpException(error, 500);
@@ -782,7 +794,8 @@ export class QianwenService {
         }
       }
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_baichuan', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_baichuan', error, spec);
       throw new HttpException(error, 500);
@@ -829,19 +842,9 @@ export class QianwenService {
           // console.error('客户端发送信息错误', error);
         }
       }
-      client.next({
-        type: spec ? 'ai_xunfei' : 'ai',
-        data: {
-          choices: [
-            {
-              delta: { content: '' },
-              finish_reason: 'normal',
-            },
-          ],
-        },
-      });
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_xunfei', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_xunfei', error, spec);
       throw new HttpException(error, 500);
@@ -888,19 +891,9 @@ export class QianwenService {
           this.clientSendError(client, 'ai_chatgpt', error, spec);
         }
       }
-      client.next({
-        type: spec ? 'ai_chatgpt' : 'ai',
-        data: {
-          choices: [
-            {
-              delta: { content: '' },
-              finish_reason: 'normal',
-            },
-          ],
-        },
-      });
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_chatgpt', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_chatgpt', error, spec);
       throw new HttpException(error, 500);
@@ -946,19 +939,9 @@ export class QianwenService {
           this.clientSendError(client, 'ai_claude', error, spec);
         }
       }
-      client.next({
-        type: spec ? 'ai_claude' : 'ai',
-        data: {
-          choices: [
-            {
-              delta: { content: '' },
-              finish_reason: 'normal',
-            },
-          ],
-        },
-      });
       obj.replyContent = replyContent;
-      this.aiModelRepository.save(obj);
+      await this.aiModelRepository.save(obj);
+      this.sendFinishMsg(client, 'ai_claude', obj.id, spec);
     } catch (error) {
       this.clientSendError(client, 'ai_claude', error, spec);
       throw new HttpException(error, 500);
@@ -1047,6 +1030,30 @@ export class QianwenService {
     Object.keys(createQianwenMapDto.createQianwenMap).forEach((key) => {
       const createQianwenDto = createQianwenMapDto.createQianwenMap[key];
       this.chooseModel(createQianwenDto, client, user, true);
+    });
+  }
+
+  sendFinishMsg(
+    client: Subscriber<MessageEvent>,
+    aiStr: string,
+    id: number,
+    spec?: boolean,
+  ) {
+    client.next({
+      type: spec ? aiStr : 'ai',
+      data: {
+        choices: [
+          {
+            delta: {
+              content: '',
+              attach: {
+                id,
+              },
+            },
+            finish_reason: 'normal',
+          },
+        ],
+      },
     });
   }
 

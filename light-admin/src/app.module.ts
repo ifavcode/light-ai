@@ -36,7 +36,8 @@ import { SshClientModule } from './config/ssh-client/ssh-client.module';
       inject: [ConfigService],
     }),
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
+      envFilePath: '.env',
     }),
     QianwenModule,
     DialogGroupModule,

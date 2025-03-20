@@ -5,7 +5,7 @@ import { Constant, MessageRole, ModelInputType, ModelType, type AllowList, type 
 import Cookies from 'js-cookie'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { getAiAllowListApi } from '@/api/setting';
-import { cancelRequestApi, createDialogGroupApi, getQianwenDialogGroupApi, getQianwenDialogGroupOneApi, sendMsgApi } from '@/api/ai';
+import { cancelRequestApi, createDialogGroupApi, getAudioHistoryApi, getQianwenDialogGroupApi, getQianwenDialogGroupOneApi, sendMsgApi, speakTextApi } from '@/api/ai';
 import { modelImageMap, marked, enhanceCodeBlock, classifyFile, getUrlToBase64 } from '@/utils';
 import 'katex/dist/katex.min.css'
 import 'katex/dist/katex.min.js'
@@ -14,6 +14,7 @@ import ClipboardJS from 'clipboard'
 import { useUserStore } from '@/stores/userStore';
 import type { UploadChangeParam, UploadFile } from 'ant-design-vue';
 import { pathRewrite } from '@/utils/request';
+import { io, Socket } from 'socket.io-client';
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -33,8 +34,18 @@ function conncetServerSseApi() {
   es.addEventListener('ai', (event: MessageEvent | any) => {
     const data: replyQianwenDTO = JSON.parse(event.data);
     if (data.choices && data.choices[0].finish_reason && data.choices[0].finish_reason != null) {
-      finishFlag.value = true
-      clearAutoScroll()
+      if (data.choices[0].delta && data.choices[0].delta.attach) {
+        const id = data.choices[0].delta.attach.id // 最新一条消息记录的主键ID
+        const len = createQianwenDto.message.length
+        if (createQianwenDto.message[len - 1].role === MessageRole.ASSISTANT && id) {
+          createQianwenDto.message[len - 1].id = id
+        } else {
+          // 异常，不存储朗读记录
+        }
+      } else {
+        finishFlag.value = true
+        clearAutoScroll()
+      }
     }
     if (timeoutTimer) {
       clearTimeout(timeoutTimer)
@@ -249,6 +260,7 @@ async function getQianwenDialogGroupOne(item: DialogGroup) {
         // 根据类型生成内容
         if (!cur.inputType || cur.inputType === ModelInputType.TEXT) {
           pre.push({
+            id: cur.id,
             role: MessageRole.USER,
             content: cur.dialogContent,
             reasoningContent: cur.reasoningContent,
@@ -269,6 +281,7 @@ async function getQianwenDialogGroupOne(item: DialogGroup) {
             text: cur.dialogContent
           })
           pre.push({
+            id: cur.id,
             role: MessageRole.USER,
             content: messageContent,
             reasoningContent: cur.reasoningContent,
@@ -276,6 +289,7 @@ async function getQianwenDialogGroupOne(item: DialogGroup) {
           })
         }
         pre.push({
+          id: cur.id,
           role: MessageRole.ASSISTANT,
           content: cur.replyContent,
           reasoningContent: cur.reasoningContent,
@@ -368,12 +382,12 @@ function hiddenToolsWindow(index: number) {
   toolsBarShowMap.value[index] = false
 }
 
-function copyText() {
-  window.$message.success('复制成功')
-}
-
 function initCopyJs() {
   new ClipboardJS('.copy-button')
+}
+
+function copyText() {
+  window.$message.success('复制成功')
 }
 
 const scrollTopShow = ref(false)
@@ -486,16 +500,106 @@ const bodyInfo = {
   height: document.body.clientHeight
 }
 
+// 朗读文本相关
+let mediaSource: MediaSource;
+let sourceBuffer: SourceBuffer | null = null;
+const mimeCodec = 'audio/mpeg';
+const audioLoading = ref(false)
+async function speakText(dialog: Message) {
+  try {
+    audioLoading.value = true
+    if (dialog.id) {
+      const { data: res } = await getAudioHistoryApi(dialog.id)
+      if (res.data && audioRef.value) {
+        audioRef.value.pause()
+        audioRef.value.src = res.data
+        audioRef.value.play()
+        audioLoading.value = false
+        return
+      }
+    }
+    if ("MediaSource" in window && MediaSource.isTypeSupported(mimeCodec) && audioRef.value) {
+      if (mediaSource?.readyState === 'open') {
+        mediaSource.endOfStream();
+      }
+      audioRef.value.pause()
+      sourceBuffer = null;
+      mediaSource = new MediaSource()
+      audioRef.value.src = URL.createObjectURL(mediaSource);
+      mediaSource.addEventListener('sourceopen', async () => {
+        sourceBuffer = mediaSource.addSourceBuffer(mimeCodec)
+        sourceBuffer.addEventListener("updateend", () => {
+          console.log('play');
+          audioRef.value?.play()
+        });
+      });
+      await speakTextApi({ text: dialog.content, id: dialog.id ?? -1 })
+    } else {
+      await speakTextApi({ text: dialog.content, id: dialog.id ?? -1 })
+      return
+    }
+  } catch (error) {
+    audioLoading.value = false
+    window.$message.error('朗读失败，请重试')
+  }
+}
+
+let socket: Socket
+const audioRef = ref<HTMLAudioElement>()
+function initSocket() {
+  const token = Cookies.get(Constant.JWT_HEADER_NAME)
+
+  if (!token) {
+    return
+  }
+  socket = io('', {
+    path: '/dev-api/socket/', extraHeaders: {
+      [Constant.JWT_HEADER_NAME]: token
+    }
+  });
+  socket.on("connect", () => {
+    console.log('socket已连接');
+    // socket.emit('connect2')
+  });
+
+  socket.on("ttvEnd", (e) => {
+    if (mediaSource && mediaSource.readyState === 'open') {
+      mediaSource.endOfStream();
+    }
+    if (!("MediaSource" in window && MediaSource.isTypeSupported(mimeCodec)) && audioRef.value) {
+      // 不支持MediaSource的情况
+      audioRef.value.pause()
+      audioRef.value.src = e.url
+      audioRef.value.play()
+    }
+    audioLoading.value = false
+  });
+
+  socket.on("ttv", (e) => {
+    if (!sourceBuffer || sourceBuffer.updating) {
+      return
+    }
+    sourceBuffer.appendBuffer(e)
+  });
+
+  socket.on("disconnect", () => {
+    console.log('socket已断开连接');
+  });
+}
+
+
 onMounted(() => {
   conncetServerSseApi()
   getAiAllowList()
   getQianwenDialogGroup()
   listenScroll()
   initCopyJs()
+  initSocket()
 })
 
 onBeforeUnmount(() => {
   es.close()
+  socket.close()
   document.removeEventListener('scroll', scrollFunc)
 })
 
@@ -585,6 +689,7 @@ onBeforeUnmount(() => {
           </div>
           <!-- 对话主体内容 -->
           <div class="flex flex-col gap-4 w-full">
+            <audio class="hidden" controls ref="audioRef" />
             <div v-for="(dialog, index) in createQianwenDto.message">
               <div v-if="dialog.role === MessageRole.ASSISTANT" class="flex gap-2 items-start relative"
                 @mouseleave="hiddenToolsWindow(index)">
@@ -592,10 +697,17 @@ onBeforeUnmount(() => {
                 <Transition name="apperBottomIn">
                   <div class="absolute top-[-30px] left-[40px] w-fit" v-show="toolsBarShowMap[index]">
                     <div
-                      class="bg-white rounded-md text-gray-800 shadow translate-y-[-0.5rem] px-3 py-2 flex items-center">
+                      class="bg-white rounded-md text-gray-800 shadow translate-y-[-0.5rem] px-3 py-1 flex items-center gap-4 w-fit h-8">
                       <button class="flex items-center cursor-pointer copy-button" :data-clipboard-text="dialog.content"
                         @click="copyText">
                         <CopyOutlined class="hover-primary" title="复制" />
+                      </button>
+                      <button class="flex items-center cursor-pointer copy-button" :data-clipboard-text="dialog.content"
+                        @click="speakText(dialog)" v-show="!audioLoading && finishFlag">
+                        <i class="iconfont font-normal hover-primary" style="font-size: 18px;" title="朗读">&#xe601;</i>
+                      </button>
+                      <button class="flex items-center copy-button" v-show="audioLoading">
+                        <LoadingOutlined />
                       </button>
                     </div>
                   </div>
@@ -624,7 +736,7 @@ onBeforeUnmount(() => {
                 <Transition name="apperBottomIn">
                   <div class="absolute top-[-30px] right-[40px] w-fit" v-show="toolsBarShowMap[index]">
                     <div
-                      class="bg-white rounded-md text-gray-800 shadow translate-y-[-0.5rem] px-3 py-2 flex items-center">
+                      class="bg-white rounded-md text-gray-800 shadow translate-y-[-0.5rem] px-3 py-2 flex items-center h-8">
                       <button class="flex items-center cursor-pointer copy-button"
                         :data-clipboard-text="getCopyTextByType(dialog)" @click="copyText">
                         <CopyOutlined class="hover-primary" title="复制" />
