@@ -2,6 +2,7 @@ import { hash, compare } from 'bcrypt';
 import { Request } from 'express';
 import { PasswordConstant } from 'src/config/constant';
 import { client } from './request';
+import { Page } from 'src/common/Page';
 
 export async function bcryptPassword(password: string): Promise<any> {
   return new Promise((resolve, rejects) => {

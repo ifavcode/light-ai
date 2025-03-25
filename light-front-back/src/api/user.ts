@@ -1,4 +1,5 @@
 import { http } from "@/utils/http";
+import { Page, R, User } from "./type";
 
 export type UserResult = {
   success: boolean;
@@ -46,4 +47,28 @@ export const getProfile = () => {
 /** 刷新`token` */
 export const refreshTokenApi = (data?: object) => {
   return http.request<RefreshTokenResult>("post", "/refresh-token", { data });
+};
+
+export const getUserPageApi = (params?: object) => {
+  return http.request<R<Page<User[]>>>("get", "/user/admin/page", { params });
+};
+
+export const updateUserApi = (id: number, data?: Partial<User>) => {
+  return http.request<R<Page<User[]>>>("post", "/user/admin/update/" + id, {
+    data
+  });
+};
+
+export const deleteUserApi = (id: number[]) => {
+  return http.request<R<Page<User[]>>>(
+    "post",
+    "/user/admin/delete/" + id.join(","),
+    {}
+  );
+};
+
+export const getUserRecordPageApi = (params?: object) => {
+  return http.request<R<Page<User[]>>>("get", "/user/admin/record/page", {
+    params
+  });
 };

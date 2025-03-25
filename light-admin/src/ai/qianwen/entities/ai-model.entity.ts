@@ -35,7 +35,9 @@ export class AiModel {
   // @Column({ length: 10 })
   // role: ['system', 'assistant', 'user'];
 
-  @ManyToOne(() => User, (user) => user.qianwenDialogs)
+  @ManyToOne(() => User, (user) => user.qianwenDialogs, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   user: User;
 
@@ -45,7 +47,10 @@ export class AiModel {
   @Column()
   aiModelType: ModelType;
 
-  @ManyToOne(() => DialogGroup, (dialogGroup) => dialogGroup.dialogs)
+  @ManyToOne(() => DialogGroup, (dialogGroup) => dialogGroup.dialogs, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn()
   dialogGroup: DialogGroup | null;
 }

@@ -8,14 +8,14 @@ export enum Constant {
 export enum RedisConstant {
   USER_KEY = 'USER_ID:',
   AUTH_KEY = 'USER_AUTH:',
-  USER_NOT_OLD_PWD = 'USER_NOT_OLD_PWD:'
+  USER_NOT_OLD_PWD = 'USER_NOT_OLD_PWD:',
 }
 
 export enum PasswordConstant {
   SALT_ROUNDS = 10,
 }
 
-export enum CoderRunnerConstant{
+export enum CoderRunnerConstant {
   JAVA_RUNNER_IMAGE_NAME = 'java-exec',
   JAVA_CONTAINER_NAME = 'java-container-exec',
   PYTHON_RUNNER_IMAGE_NAME = 'python-exec',
@@ -24,18 +24,22 @@ export enum CoderRunnerConstant{
   GCC_CONTAINER_NAME = 'gcc-container-exec',
 }
 
-export enum VirCompanyConstant{
+export enum VirCompanyConstant {
   IMAGE_NAME = 'metagpt/metagpt:latest',
-  WORKERSPACE_DIR = '/opt/metagpt/workspace/'
-
+  WORKERSPACE_DIR = '/opt/metagpt/workspace/',
 }
 
 export enum SystemConstant {
-  DOMAIN = 'https://www.guetzjb.cn',// 存储文件服务器的域名
+  DOMAIN = 'https://www.guetzjb.cn', // 存储文件服务器的域名
   FILE_ADDRESS = '/opt/files',
   NGINX_ASSETS = '/assets_other',
 }
 
-export enum SSHConstant{
-  METAGPT_BASE_PATH = '/opt/metagpt/workspace/'
+export enum SSHConstant {
+  METAGPT_BASE_PATH = '/opt/metagpt/workspace/',
+}
+
+export enum RoleConstant {
+  User = 'user',
+  Admin = 'admin',
 }

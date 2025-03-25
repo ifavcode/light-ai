@@ -25,20 +25,15 @@ const languages = ref<RC[]>([])
 let stopTimer: number
 function setEditorLanguage() {
   monaco.editor.setModelLanguage(codeEditor.getModel()!, execCode.codeType)
+  formatCode()
 }
 
 let codeEditor: monaco.editor.IStandaloneCodeEditor
 function initEditor() {
   monaco.editor.defineTheme('xcode', xcoode as any)
   codeEditor = monaco.editor.create(codeEditorRef.value, {
-    value: `public class Main {
-        public static void main(String[] args) {
-            for (int i = 0; i < 10; i++) {
-                System.out.println("233");
-            }
-        }
-    }`,
-    contextmenu: false,
+    value: ``,
+    contextmenu: true,
     automaticLayout: true,
     minimap: {
       enabled: false
@@ -173,6 +168,7 @@ function toggleLanguage(item: RC) {
 function execCodeWs() {
   isRunning.value = true
   output.value = ''
+  outputErr.value = ''
   execCode.sourceCode = codeEditor.getValue()
   socket.emit('execCode', execCode)
   clearTimeoutFunc()
@@ -183,7 +179,7 @@ function clearTimeoutFunc() {
   stopTimer = setTimeout(() => {
     window.$message.error('运行超时，请重试')
     isRunning.value = false
-  }, 1000 * 40); // 40s运行超时自动取消
+  }, 1000 * 10); // 10s运行超时自动取消
 }
 
 let socket: Socket
@@ -232,6 +228,14 @@ function autoSave() {
     execCode.sourceCode = codeEditor.getValue()
     localStorage.setItem(`code-${execCode.codeType}`, JSON.stringify(execCode))
   }, 3000);
+}
+
+const isMobile = computed(() => {
+  return document.body.clientWidth <= 480
+})
+
+async function formatCode() {
+  codeEditor.getAction('editor.action.formatDocument')?.run();;
 }
 
 onMounted(() => {
@@ -285,6 +289,9 @@ onBeforeUnmount(() => {
               </MenuItems>
             </transition>
           </Menu>
+          <!-- <div class="text-sm flex items-center gap-1 select-none cursor-pointer" @click="formatCode">
+            <p class="text-gray-500 hover-primary">格式化</p>
+          </div> -->
           <div class="text-sm flex items-center gap-1 select-none">
             <SaveOutlined />
             <p class="text-gray-500">自动保存</p>
@@ -299,13 +306,13 @@ onBeforeUnmount(() => {
           </button>
         </div>
       </div>
-      <div ref="codeEditorRef" class="w-full" style="height: calc(100vh - 6rem);">
+      <div ref="codeEditorRef" class="w-full" :style="{ height: isMobile ? '360px' : 'calc(100vh - 6rem)' }">
       </div>
     </div>
     <div class="w-[2px] bg-gray-100 cursor-move hover:bg-blue-500 transition-all duration-200" ref="centerRef">
     </div>
     <div class="relative bg-white max-sm:w-full max-sm:border-t max-sm:border-t-gray-200" ref="rightRef">
-      <div class="w-full p-4" style="height: calc(100vh - 6rem);">
+      <div class="w-full p-4" :style="{ height: isMobile ? '360px' : 'calc(100vh - 6rem)' }">
         <div class="w-full h-1/2 border-b border-gray-200">
           <p>
             <i class="iconfont">&#xe600;</i>

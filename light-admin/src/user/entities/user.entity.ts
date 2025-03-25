@@ -1,6 +1,8 @@
 import {
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -12,6 +14,7 @@ import { UploadRecord } from 'src/upload/entities/upload-record.entity';
 import { PicToVideo } from 'src/ai/tools/entities/pic-to-video.entity';
 import { VirtualCompany } from 'src/ai/tools/entities/virtual-company.entity';
 import { UserRecord } from './user-record.entity';
+import { Role } from 'src/role/entities/role.entity';
 
 @Entity()
 export class User {
@@ -56,4 +59,8 @@ export class User {
 
   @OneToMany(() => UserRecord, (o) => o.user)
   userRecord: UserRecord[];
+
+  @ManyToMany(() => Role, (o) => o.users)
+  @JoinTable()
+  roles: Role[];
 }

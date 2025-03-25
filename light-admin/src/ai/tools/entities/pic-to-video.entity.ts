@@ -37,7 +37,9 @@ export class PicToVideo {
   @Column()
   createTime: Date;
 
-  @ManyToOne(() => User, (user) => user.picToVideoRecord)
+  @ManyToOne(() => User, (user) => user.picToVideoRecord, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   user: User;
 
@@ -62,6 +64,5 @@ export class PicToVideo {
   @Column({
     default: '',
   })
-  rawVideoUrl: string; 
+  rawVideoUrl: string;
 }
- 

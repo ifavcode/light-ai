@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ProxyAgent, setGlobalDispatcher } from 'undici';
 import { createPicToVideoTask } from './utils/request';
 import { bcryptPassword } from './utils';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,6 +23,16 @@ async function bootstrap() {
   //   uri: new URL('http://127.0.0.1:7890').toString(),
   // });
   // setGlobalDispatcher(dispatcher);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

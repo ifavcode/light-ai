@@ -17,6 +17,8 @@ import { EventsModule } from './events/events.module';
 import { ToolsModule } from './ai/tools/tools.module';
 import { UploadModule } from './upload/upload.module';
 import { SshClientModule } from './config/ssh-client/ssh-client.module';
+import { RoleModule } from './role/role.module';
+import { RolesGuard } from './role/roles.guard';
 
 @Module({ 
   imports: [
@@ -39,13 +41,14 @@ import { SshClientModule } from './config/ssh-client/ssh-client.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    QianwenModule,
+    QianwenModule, 
     DialogGroupModule,
     DockerModule,
     EventsModule,
     ToolsModule,
     UploadModule,
-    SshClientModule
+    SshClientModule,
+    RoleModule
   ],
   controllers: [AppController],
   providers: [
@@ -57,6 +60,10 @@ import { SshClientModule } from './config/ssh-client/ssh-client.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })

@@ -10,7 +10,7 @@ export default class R {
       this.msg = msg;
     }
     this.data = data;
-  }
+  } 
 
   static ok(msg?: string, data?: any) {
     return new R(200, msg, data);

@@ -2,7 +2,7 @@ export enum Constant {
   JWT_HEADER_NAME = "Authorization",
   MODEL_SELECT = "model_select",
   MODEL_SELECT_ONE = "mode_select_one",
-  IS_REASONING = "is_reasoning",
+  IS_REASONING = "is_reasoning"
 }
 
 export enum ModelType {
@@ -10,7 +10,7 @@ export enum ModelType {
   QIAN_WEN = "qianwen",
   QIAN_FAN = "qianfan",
   DOU_BAO = "doubao",
-  KI_MI = "kimi",
+  KI_MI = "kimi"
 }
 
 export interface R<T> {
@@ -91,7 +91,7 @@ export interface DialogGroup {
 export enum MessageRole {
   SYSTEM = "system",
   USER = "user",
-  ASSISTANT = "assistant",
+  ASSISTANT = "assistant"
 }
 
 export interface Message {
@@ -151,7 +151,7 @@ export interface CreateQianwenMapDto {
 export enum CodeType {
   JAVA = "java",
   CPP = "cpp",
-  PYTHON = "python",
+  PYTHON = "python"
 }
 
 export interface ExecCode {
@@ -163,7 +163,7 @@ export interface ExecCode {
 export enum ExecStatus {
   RUNNING = 1,
   FINISH = 0,
-  ERROR = 2,
+  ERROR = 2
 }
 
 export interface AiTool {
@@ -213,7 +213,7 @@ export interface PicToVideo {
 export enum TaskStatusEnum {
   SUCCEEDED = "SUCCEEDED",
   RUNNING = "RUNNING",
-  ERRORED = "ERRORED",
+  ERRORED = "ERRORED"
 }
 
 export interface VirtualCompanyDTO {
@@ -237,7 +237,7 @@ export enum ModelInputType {
   TEXT = "text",
   IMAGE = "image",
   VIDEO = "video",
-  OTHER = "other",
+  OTHER = "other"
 }
 
 export interface TextToVideoDTO {

@@ -29,9 +29,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('认证过期');
     }
     const userJson = await this.redis.get(RedisConstant.USER_KEY + payload.id);
+
     if (userJson) {
       return JSON.parse(userJson);
     }
-    return { id: payload.id, username: payload.username };
+
+    return payload;
   }
 }

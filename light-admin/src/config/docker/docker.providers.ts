@@ -25,16 +25,16 @@ export const dockerProviders = [
           cert: fs.readFileSync(path.join(certsPath, 'cert.pem')),
           key: fs.readFileSync(path.join(certsPath, 'key.pem')),
         });
-        // 检查是否连接成功
+        // 检查是否连接成功 
         const info = await docker.info();
         // console.log(info);
 
-        return docker;
+        return docker;  
       } catch (error) {
-        console.error('Failed to create Docker instance:', error);
+        console.error('Failed to create Docker instance:', error);  
         throw error;
       }
     },
-    inject: [ConfigService],
+    inject: [ConfigService], 
   },
 ];

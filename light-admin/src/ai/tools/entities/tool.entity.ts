@@ -29,8 +29,10 @@ export class AiTool {
 
   @Column({ default: false })
   delFlag: boolean;
- 
-  @ManyToOne(() => User, (user) => user.qianwenDialogs)
+
+  @ManyToOne(() => User, (user) => user.qianwenDialogs, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   user: User;
 }

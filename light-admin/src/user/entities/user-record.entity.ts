@@ -18,6 +18,6 @@ export class UserRecord {
   @Column()
   createTime: Date;
 
-  @ManyToOne(() => User, (user) => user.userRecord)
+  @ManyToOne(() => User, (user) => user.userRecord, { onDelete: 'CASCADE' })
   user: User;
 }

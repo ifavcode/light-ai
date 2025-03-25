@@ -28,7 +28,9 @@ export class VirtualCompany {
   @Column()
   taskStatus: TaskStatusEnum;
 
-  @ManyToOne(() => User, (user) => user.picToVideoRecord)
+  @ManyToOne(() => User, (user) => user.picToVideoRecord, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   user: User;
 

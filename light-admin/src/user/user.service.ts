@@ -1,7 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { bcryptPassword } from 'src/utils';
 import { da, fa, faker } from '@faker-js/faker';
@@ -18,6 +18,7 @@ import tmp from 'tmp';
 import { Response } from 'express';
 import archiver from 'archiver';
 import { UserRecord } from './entities/user-record.entity';
+import { QueryUserDto } from './dto/query-user.dto';
 
 @Injectable()
 export class UserService {
@@ -62,8 +63,67 @@ export class UserService {
     };
   }
 
-  findAll() {
-    return this.userRepository.find();
+  async findAll(queryUserDto: QueryUserDto) {
+    const whereCondition: any = {};
+    if (queryUserDto.nickname) {
+      whereCondition.nickname = Like(queryUserDto.nickname);
+    }
+    if (queryUserDto.username) {
+      whereCondition.username = Like(queryUserDto.username);
+    }
+    queryUserDto.total = await this.userRepository.count({
+      where: whereCondition,
+    });
+    const list = await this.userRepository.find({
+      where: whereCondition,
+      take: queryUserDto.pageSize,
+      skip: queryUserDto.getSkip(),
+      relations: {
+        roles: true,
+      },
+      select: {
+        id: true,
+        username: true,
+        nickname: true,
+        avatar: true,
+        createTime: true,
+        password: false,
+      },
+    });
+    queryUserDto.setList(list);
+    return queryUserDto;
+  }
+
+  async findRecordAll(queryUserDto: QueryUserDto) {
+    const whereCondition: any = {};
+    if (queryUserDto.nickname) {
+      whereCondition.nickname = Like(queryUserDto.nickname);
+    }
+    if (queryUserDto.username) {
+      whereCondition.username = Like(queryUserDto.username);
+    }
+    queryUserDto.total = await this.userRepository.count({
+      where: whereCondition,
+    });
+    const list = await this.userRecordRepository.find({
+      where: whereCondition,
+      take: queryUserDto.pageSize,
+      skip: queryUserDto.getSkip(),
+      order: {
+        createTime: 'DESC',
+      },
+      relations: {
+        user: true,
+      },
+      select: {
+        user: {
+          nickname: true,
+          avatar: true,
+        },
+      },
+    });
+    queryUserDto.setList(list);
+    return queryUserDto;
   }
 
   findOne(id: number) {
@@ -83,11 +143,11 @@ export class UserService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    return this.userRepository.update(id, updateUserDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  delete(id: number[]) {
+    return this.userRepository.delete(id);
   }
 
   async listFiles(user: User, dir: string) {
@@ -563,7 +623,7 @@ export class UserService {
     ur.rowIp = rowIp;
     ur.ip = ip;
     ur.createTime = new Date();
-    ur.agent = agent
+    ur.agent = agent;
     if (user) {
       ur.user = user;
     }

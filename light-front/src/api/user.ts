@@ -1,4 +1,4 @@
-import type { Auth, R, User } from "@/types";
+import type { Auth, Page, R, User } from "@/types";
 import client from "@/utils/request";
 import useDownload from "@/utils/useDownload";
 import type { AxiosResponse } from "axios";
@@ -150,6 +150,14 @@ export async function userRecordApi(): Promise<
   AxiosResponse<R<Record<string, any>>>
 > {
   return await client.get("/user/record", {
+    headers: {
+      isToken: true,
+    },
+  });
+}
+
+export async function getUserPageApi(): Promise<AxiosResponse<R<Page<User>>>> {
+  return await client.get("/user/admin/page", {
     headers: {
       isToken: true,
     },

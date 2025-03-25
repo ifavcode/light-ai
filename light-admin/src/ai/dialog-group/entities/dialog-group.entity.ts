@@ -28,10 +28,12 @@ export class DialogGroup {
   @Column({ default: ModelInputType.TEXT })
   inputType: ModelInputType;
 
-  @ManyToOne(() => User, (user) => user.dialogGroup)
-  @JoinColumn() 
+  @ManyToOne(() => User, (user) => user.dialogGroup, { onDelete: 'CASCADE' })
+  @JoinColumn()
   user: User;
 
-  @OneToMany(() => AiModel, (aiDialog) => aiDialog.dialogGroup)
+  @OneToMany(() => AiModel, (aiDialog) => aiDialog.dialogGroup, {
+    onDelete: 'CASCADE',
+  })
   dialogs: AiModel[];
 }

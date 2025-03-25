@@ -33,6 +33,9 @@ export class AuthService {
       where: {
         username,
       },
+      relations: {
+        roles: true,
+      },
     });
     if (!user) return null;
     if (await checkPassword(pass, user.password)) {
@@ -44,7 +47,12 @@ export class AuthService {
 
   login(user: User) {
     const uuid = randomUUID();
-    const payload = { username: user.username, id: user.id, uuid };
+    const payload = {
+      username: user.username,
+      id: user.id,
+      roles: user.roles,
+      uuid,
+    };
     this.redis.set(RedisConstant.USER_KEY + user.id, JSON.stringify(user));
     this.redis.set(RedisConstant.AUTH_KEY + user.id, uuid);
     return {
@@ -88,6 +96,6 @@ export class AuthService {
 
   async judgeChangePwd(user: User) {
     const v = await this.redis.get(RedisConstant.USER_NOT_OLD_PWD + user.id);
-    return !!v
+    return !!v;
   }
 }

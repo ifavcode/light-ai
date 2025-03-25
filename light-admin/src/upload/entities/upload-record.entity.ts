@@ -12,7 +12,9 @@ export class UploadRecord {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.uploadRecords)
+  @ManyToOne(() => User, (user) => user.uploadRecords, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   user: User;
 
