@@ -15,7 +15,7 @@ function createPicToVideoTask(picToVideo: PicToVideo) {
     console.error(`未配置QIANWEN_API_KEY，无法创建任务`);
     return;
   }
-  return client.post(
+  return client.post( 
     'https://dashscope.aliyuncs.com/api/v1/services/aigc/video-generation/video-synthesis',
     {
       model: picToVideo.model,

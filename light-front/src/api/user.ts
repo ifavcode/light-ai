@@ -163,3 +163,15 @@ export async function getUserPageApi(): Promise<AxiosResponse<R<Page<User>>>> {
     },
   });
 }
+
+export async function uploadFileApi(
+  file: File
+): Promise<AxiosResponse<R<string>>> {
+  const formData = new FormData();
+  formData.append("file", file);
+  return await client.post("/upload/oss", formData, {
+    headers: {
+      isToken: true,
+    },
+  });
+}

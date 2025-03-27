@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { getAiAllowListApi } from '@/api/setting';
 import { cancelRequestApi, createDialogGroupApi, getAudioHistoryApi, getQianwenDialogGroupApi, getQianwenDialogGroupOneApi, sendMsgApi, speakTextApi } from '@/api/ai';
-import { modelImageMap, marked, enhanceCodeBlock, classifyFile, getUrlToBase64 } from '@/utils';
+import { modelImageMap, marked, enhanceCodeBlock, classifyFile, getUrlToBase64, randomFileName } from '@/utils';
 import 'katex/dist/katex.min.css'
 import 'katex/dist/katex.min.js'
 import router from '@/router';
@@ -15,6 +15,8 @@ import { useUserStore } from '@/stores/userStore';
 import type { UploadChangeParam, UploadFile } from 'ant-design-vue';
 import { pathRewrite } from '@/utils/request';
 import { io, Socket } from 'socket.io-client';
+import { uploadFileApi } from '@/api/user';
+import { nanoid } from 'nanoid'
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -130,7 +132,7 @@ async function sendMsg() {
       window.$message.warning('等待图片上传完成')
       return
     }
-    createQianwenDto.inputType = classifyFile(imageList.value[0].originFileObj?.name as string)
+    createQianwenDto.inputType = classifyFile(imageList.value[0].originFileObj?.name || imageList.value[0].fileName || '')
     if (createQianwenDto.inputType === ModelInputType.OTHER) {
       window.$message.warning('不支持此类型的附件，请上传其他类型')
       return
@@ -225,7 +227,7 @@ function sendMsgCheck(e: KeyboardEvent) {
 
 const dialogGroups = ref<DialogGroup[]>([])
 const dialogGroupsActiveId = ref(-1)
-const page = reactive<Page>({
+const page = reactive<Page<any>>({
   pageNum: 1,
   pageSize: 20
 })
@@ -437,7 +439,7 @@ const beforeUpload = (file: any) => {
   if (!isLt10M) {
     window.$message.error('最大为10MB!');
   }
-  return isLt10M;
+  return isLt10M && isJpgOrPngOrMore;
 };
 
 const handleChange = (info: UploadChangeParam) => {
@@ -452,6 +454,8 @@ const handleChange = (info: UploadChangeParam) => {
       if (createQianwenDto.aiModelType === ModelType.QIAN_WEN) {
         window.$message.warning(`此模型解析文件不支持深度思考`)
         createQianwenDto.reasoning = false
+        console.log(imageList.value);
+
       }
     }
     loading.value = false;
@@ -585,6 +589,37 @@ function initSocket() {
   socket.on("disconnect", () => {
     console.log('socket已断开连接');
   });
+}
+
+// 粘贴内容
+async function pasteContent(e: ClipboardEvent) {
+  const items = e.clipboardData?.items;
+  if (items) {
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].kind === 'file') {
+        const file = items[i].getAsFile();
+        if (file) {
+          try {
+            loading.value = true
+            const { data: res } = await uploadFileApi(file)
+            const filename = randomFileName(file)
+            imageList.value.push({
+              uid: nanoid(10),
+              name: filename,
+              fileName: filename,
+              response: {
+                data: res.data
+              }
+            })
+          } catch (error) {
+
+          } finally {
+            loading.value = false
+          }
+        }
+      }
+    }
+  }
 }
 
 
@@ -777,7 +812,7 @@ onBeforeUnmount(() => {
           focus:border-blue-400 rounded-md placeholder:text-sm text-sm placeholder:text-gray-400
            focus:placeholder:text-blue-400 p-2 resize-none w-full h-36
            transition duration-100 max-sm:h-24" placeholder="发消息" v-model="createQianwenDto.dialogContent"
-              @keydown="sendMsgCheck" />
+              @keydown="sendMsgCheck" @paste="pasteContent" />
             <button class="absolute bottom-2 right-12 bg-blue-500 hover:bg-blue-400 text-white rounded-full size-8 flex
            justify-center items-center cursor-pointer disabled:bg-gray-400 transition duration-500"
               v-show="!finishFlag" @click="cancelOutput">
@@ -791,7 +826,8 @@ onBeforeUnmount(() => {
                   [Constant.JWT_HEADER_NAME]: Cookies.get(Constant.JWT_HEADER_NAME) || ''
                 }" @change="handleChange">
                 <button v-show="imageList.length === 0" class="bg-blue-500 hover:bg-blue-400 text-white rounded-full size-8 flex
-           justify-center items-center cursor-pointer disabled:bg-gray-400 transition duration-500">
+           justify-center items-center cursor-pointer disabled:bg-gray-400 transition duration-500"
+                  title="附件（支持粘贴、支持拖拽，拖拽至此处上传）">
                   <i class="iconfont">&#xe655;</i>
                 </button>
               </a-upload>

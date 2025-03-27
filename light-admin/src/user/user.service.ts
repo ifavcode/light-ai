@@ -102,7 +102,7 @@ export class UserService {
     if (queryUserDto.username) {
       whereCondition.username = Like(queryUserDto.username);
     }
-    queryUserDto.total = await this.userRepository.count({
+    queryUserDto.total = await this.userRecordRepository.count({
       where: whereCondition,
     });
     const list = await this.userRecordRepository.find({

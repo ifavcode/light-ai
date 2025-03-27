@@ -5,6 +5,7 @@ import "highlight.js/styles/github-dark-dimmed.min.css";
 import markedKatex from "marked-katex-extension";
 import mitt from "mitt";
 import { ModelInputType } from "@/types";
+import { nanoid } from "nanoid";
 
 export function getAssetsImg(pos: string) {
   return `/src/assets${pos}`;
@@ -156,4 +157,14 @@ async function getUrlToBase64(url: string) {
   });
 }
 
-export { emitter, enhanceCodeBlock, classifyFile, getUrlToBase64 };
+function randomFileName(file: File) {
+  const name = file.name;
+  const ids = name.lastIndexOf(".");
+  const prefix = nanoid(8)
+  if (ids != -1) {
+    return prefix + name.substring(ids);
+  }
+  return prefix
+}
+
+export { emitter, enhanceCodeBlock, classifyFile, getUrlToBase64,randomFileName };

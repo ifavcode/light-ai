@@ -26,7 +26,7 @@ export const dockerProviders = [
           key: fs.readFileSync(path.join(certsPath, 'key.pem')),
         });
         // 检查是否连接成功 
-        const info = await docker.info();
+        // const info = await docker.info();
         // console.log(info);
 
         return docker;  
