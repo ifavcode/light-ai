@@ -47,7 +47,7 @@ import { RolesGuard } from './role/roles.guard';
     EventsModule,
     ToolsModule,
     UploadModule,
-    SshClientModule,
+    SshClientModule, 
     RoleModule
   ],
   controllers: [AppController],
@@ -59,7 +59,7 @@ import { RolesGuard } from './role/roles.guard';
     },
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useClass: JwtAuthGuard, 
     },
     {
       provide: APP_GUARD,

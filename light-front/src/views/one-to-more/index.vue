@@ -126,7 +126,7 @@ function sendMsgCheck(e: KeyboardEvent) {
 }
 
 const dialogGroups = ref<DialogGroup[]>([])
-const page = reactive<Page>({
+const page = reactive<Page<any>>({
   pageNum: 1,
   pageSize: 20
 })
@@ -309,7 +309,9 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  es.close()
+  if (es) {
+    es.close()
+  }
 })
 
 </script>
@@ -398,7 +400,8 @@ onBeforeUnmount(() => {
       </div>
     </div>
     <div>
-      <div class="transition duration-1000 fixed w-[1000px] bottom-4 left-[50%] translate-x-[-50%] max-sm:bottom-0 max-sm:w-full">
+      <div
+        class="transition duration-1000 fixed w-[1000px] bottom-4 left-[50%] translate-x-[-50%] max-sm:bottom-0 max-sm:w-full">
         <div class="relative w-full h-36 max-sm:h-24">
           <textarea v-model="dialogContent" class="focus:outline-none border-2 border-gray-400 
               bg-white

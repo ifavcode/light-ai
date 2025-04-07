@@ -6,9 +6,21 @@ import markedKatex from "marked-katex-extension";
 import mitt from "mitt";
 import { ModelInputType } from "@/types";
 import { nanoid } from "nanoid";
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export type ObjectValues<T> = T[keyof T];
 
 export function getAssetsImg(pos: string) {
-  return `/src/assets${pos}`;
+  return new URL(`/src/assets` + pos, import.meta.url).href;
+}
+
+export function getPublicImg(pos: string) {
+  return new URL(`/model` + pos, import.meta.url).href;
 }
 
 // AI模型LOGO URL
@@ -32,6 +44,22 @@ export const modelImageMap = {
   xunfei: "https://www.guetzjb.cn/assets_other/2025-02-26/xunfei.png",
   chatgpt: "https://www.guetzjb.cn/assets_other/2025-02-26/openai.png",
 };
+
+export const modelImages = [
+  getPublicImg("/deepseek.png"),
+  getPublicImg("/claude-color.png"),
+  getPublicImg("/qianfan.png"),
+  getPublicImg("/qianwen.png"),
+  getPublicImg("/doubao.png"),
+  getPublicImg("/kimi.png"),
+  getPublicImg("/gemini-color.png"),
+  getPublicImg("/zhipu-color.png"),
+  getPublicImg("/hunyuan-color.png"),
+  getPublicImg("/yuewen.png"),
+  getPublicImg("/baichuan-color.png"),
+  getPublicImg("/xunfei.png"),
+  getPublicImg("/openai.png"),
+];
 
 export const marked = new Marked(
   markedHighlight({
@@ -160,11 +188,17 @@ async function getUrlToBase64(url: string) {
 function randomFileName(file: File) {
   const name = file.name;
   const ids = name.lastIndexOf(".");
-  const prefix = nanoid(8)
+  const prefix = nanoid(8);
   if (ids != -1) {
     return prefix + name.substring(ids);
   }
-  return prefix
+  return prefix;
 }
 
-export { emitter, enhanceCodeBlock, classifyFile, getUrlToBase64,randomFileName };
+export {
+  emitter,
+  enhanceCodeBlock,
+  classifyFile,
+  getUrlToBase64,
+  randomFileName,
+};

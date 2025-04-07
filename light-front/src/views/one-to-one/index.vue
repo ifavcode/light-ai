@@ -633,8 +633,12 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  es.close()
-  socket.close()
+  if (es) {
+    es.close()
+  }
+  if (socket) {
+    socket.close()
+  }
   document.removeEventListener('scroll', scrollFunc)
 })
 
