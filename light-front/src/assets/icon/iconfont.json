@@ -1,0 +1,65 @@
+{
+  "id": "4835565",
+  "name": "light-ai",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "201560",
+      "name": "喇叭",
+      "font_class": "laba",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "9568077",
+      "name": "回形针",
+      "font_class": "huixingzhen",
+      "unicode": "e655",
+      "unicode_decimal": 58965
+    },
+    {
+      "icon_id": "40023109",
+      "name": "AI图生成视频",
+      "font_class": "AItushengchengshipin",
+      "unicode": "e70f",
+      "unicode_decimal": 59151
+    },
+    {
+      "icon_id": "6048",
+      "name": "输入",
+      "font_class": "shuru",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "12975229",
+      "name": "控制台",
+      "font_class": "kongzhitai",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "8312527",
+      "name": "通过",
+      "font_class": "tongguo",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "30196257",
+      "name": "通过",
+      "font_class": "tongguo1",
+      "unicode": "e769",
+      "unicode_decimal": 59241
+    },
+    {
+      "icon_id": "7239694",
+      "name": "copy",
+      "font_class": "copy",
+      "unicode": "e725",
+      "unicode_decimal": 59173
+    }
+  ]
+}
