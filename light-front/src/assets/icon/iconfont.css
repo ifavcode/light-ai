@@ -1,8 +1,11 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4835565 */
-  src: url('iconfont.woff2?t=1742441953659') format('woff2'),
-       url('iconfont.woff?t=1742441953659') format('woff'),
-       url('iconfont.ttf?t=1742441953659') format('truetype');
+  src: url("//at.alicdn.com/t/c/font_4835565_qmdhmc9snnd.woff2?t=1746782157096")
+      format("woff2"),
+    url("//at.alicdn.com/t/c/font_4835565_qmdhmc9snnd.woff?t=1746782157096")
+      format("woff"),
+    url("//at.alicdn.com/t/c/font_4835565_qmdhmc9snnd.ttf?t=1746782157096")
+      format("truetype");
 }
 
 .iconfont {
@@ -44,4 +47,3 @@
 .icon-copy:before {
   content: "\e725";
 }
-
